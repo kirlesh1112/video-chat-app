@@ -6,18 +6,21 @@ const path = require("path");
 const app = express();
 const server = http.createServer(app);
 
-// ✅ IMPORTANT FOR RENDER
+// ✅ SOCKET.IO
 const io = new Server(server, {
-  cors: {
-    origin: "*"
-  }
+  cors: { origin: "*" }
 });
 
 // ✅ STATIC FILES
 app.use(express.static(path.join(__dirname, "public")));
 
-// ✅ REQUIRED ROUTE FOR RENDER (VERY IMPORTANT)
+// ✅ HEALTH CHECK (FOR RENDER)
 app.get("/", (req, res) => {
+  res.json({ status: "OK" });
+});
+
+// ✅ LOAD WEBSITE
+app.get("/home", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
@@ -136,7 +139,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// =====================
+// CONNECT USERS
 function connectUsers(user1, user2) {
   const roomId = user1.id + "#" + user2.id;
 
@@ -157,7 +160,7 @@ function connectUsers(user1, user2) {
   });
 }
 
-// ✅ IMPORTANT FIX FOR RENDER
+// ✅ FINAL FIX FOR RENDER
 const PORT = process.env.PORT || 3000;
 
 server.listen(PORT, "0.0.0.0", () => {
