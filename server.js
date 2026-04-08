@@ -6,11 +6,20 @@ const path = require("path");
 const app = express();
 const server = http.createServer(app);
 
+// ✅ IMPORTANT FOR RENDER
 const io = new Server(server, {
-  cors: { origin: "*" }
+  cors: {
+    origin: "*"
+  }
 });
 
+// ✅ STATIC FILES
 app.use(express.static(path.join(__dirname, "public")));
+
+// ✅ REQUIRED ROUTE FOR RENDER (VERY IMPORTANT)
+app.get("/", (req, res) => {
+  res.send("Server is running 🚀");
+});
 
 let waitingUsers = [];
 
@@ -19,18 +28,14 @@ io.on("connection", (socket) => {
 
   socket.on("join-queue", (data) => {
 
-    // ✅ SAVE USER DATA SAFELY
     socket.userData = data;
 
-    // ✅ REMOVE OLD ENTRY
     waitingUsers = waitingUsers.filter(u => u.id !== socket.id);
 
-    // =====================
     // SAME LANGUAGE MATCH
-    // =====================
     let index = waitingUsers.findIndex(user =>
       user &&
-      user.userData &&   // 🔥 FIX (IMPORTANT)
+      user.userData &&
       user.userData.gender &&
       user.userData.language &&
       user.id !== socket.id &&
@@ -44,12 +49,10 @@ io.on("connection", (socket) => {
       return;
     }
 
-    // =====================
     // FALLBACK MATCH
-    // =====================
     index = waitingUsers.findIndex(user =>
       user &&
-      user.userData &&   // 🔥 FIX
+      user.userData &&
       user.userData.gender &&
       user.id !== socket.id &&
       user.userData.gender !== data.gender
@@ -70,15 +73,9 @@ io.on("connection", (socket) => {
       return;
     }
 
-    // =====================
-    // WAIT
-    // =====================
     waitingUsers.push(socket);
   });
 
-  // =====================
-  // FALLBACK RESPONSE
-  // =====================
   socket.on("fallback-response", (accepted) => {
     const partner = socket.tempPartner;
     if (!partner) return;
@@ -96,9 +93,7 @@ io.on("connection", (socket) => {
     }
   });
 
-  // =====================
   // WEBRTC
-  // =====================
   socket.on("webrtc-offer", ({ roomId, offer }) => {
     socket.to(roomId).emit("webrtc-offer", { offer });
   });
@@ -111,16 +106,12 @@ io.on("connection", (socket) => {
     socket.to(roomId).emit("webrtc-ice", { candidate });
   });
 
-  // =====================
   // CHAT
-  // =====================
   socket.on("chat-message", ({ roomId, message }) => {
     socket.to(roomId).emit("chat-message", message);
   });
 
-  // =====================
   // NEXT USER
-  // =====================
   socket.on("next-user", () => {
     if (socket.roomId) {
       socket.to(socket.roomId).emit("partner-disconnected");
@@ -133,9 +124,7 @@ io.on("connection", (socket) => {
     waitingUsers.push(socket);
   });
 
-  // =====================
   // DISCONNECT
-  // =====================
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
 
@@ -168,7 +157,9 @@ function connectUsers(user1, user2) {
   });
 }
 
-// =====================
-server.listen(3000, () => {
-  console.log("Server running on port 3000");
+// ✅ IMPORTANT FIX FOR RENDER
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, "0.0.0.0", () => {
+  console.log("Server running on port " + PORT);
 });
