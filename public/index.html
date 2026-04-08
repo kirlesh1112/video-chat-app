@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ChatRandom</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- ENTRY -->
+<div id="entry-screen" class="screen active">
+    <div class="container">
+        <h1>🎥 ChatRandom</h1>
+
+        <input id="name" placeholder="Name"><br><br>
+
+        <select id="gender">
+            <option value="">Gender</option>
+            <option>Male</option>
+            <option>Female</option>
+        </select><br><br>
+
+        <select id="language">
+            <option value="">Language</option>
+            <option>Telugu</option>
+            <option>Hindi</option>
+            <option>English</option>
+        </select><br><br>
+
+        <button id="startBtn">Start Chatting</button>
+    </div>
+</div>
+
+<!-- WAITING -->
+<div id="waiting-screen" class="screen">
+    <h2 style="text-align:center;margin-top:200px;">Finding partner...</h2>
+</div>
+
+<!-- CHAT SCREEN -->
+<div id="chat-screen" class="screen">
+
+    <div class="main-layout">
+
+        <!-- VIDEOS -->
+        <div class="video-section">
+
+            <div class="video-box">
+                <video id="localVideo" autoplay muted playsinline></video>
+                <span class="label">You</span>
+            </div>
+
+            <div class="video-box">
+                <video id="partnerVideo" autoplay playsinline></video>
+                <span class="label" id="partnerName">Connecting...</span>
+            </div>
+
+        </div>
+
+        <!-- CHAT -->
+        <div class="chat-container">
+            <div id="chatMessages" class="chat-messages"></div>
+
+            <div class="chat-input">
+                <input id="chatInput" placeholder="Type message..." />
+                <button id="sendBtn">Send</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="controls">
+        <button id="nextBtn">Next</button>
+        <button id="reportBtn">Report</button>
+        <button id="muteBtn">Mute</button>
+    </div>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
