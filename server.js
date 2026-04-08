@@ -18,7 +18,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // ✅ REQUIRED ROUTE FOR RENDER (VERY IMPORTANT)
 app.get("/", (req, res) => {
-  res.send("Server is running 🚀");
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
 let waitingUsers = [];
