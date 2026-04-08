@@ -6,41 +6,45 @@ const path = require("path");
 const app = express();
 const server = http.createServer(app);
 
-// ✅ SOCKET.IO
+// ✅ SOCKET SETUP
 const io = new Server(server, {
   cors: { origin: "*" }
 });
 
-// ✅ STATIC FILES
+// ✅ SERVE FRONTEND
 app.use(express.static(path.join(__dirname, "public")));
 
-// ✅ HEALTH CHECK (FOR RENDER)
+// ✅ IMPORTANT: ROOT MUST RETURN HTML (Fix 521)
 app.get("/", (req, res) => {
-  res.json({ status: "OK" });
-});
-
-// ✅ LOAD WEBSITE
-app.get("/home", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
+// =====================
 let waitingUsers = [];
 
+// =====================
 io.on("connection", (socket) => {
   console.log("User connected:", socket.id);
 
   socket.on("join-queue", (data) => {
 
-    socket.userData = data;
+    // ✅ SAVE USER DATA SAFELY
+    socket.userData = data || {};
 
+    // REMOVE OLD ENTRY
     waitingUsers = waitingUsers.filter(u => u.id !== socket.id);
 
+    // =====================
     // SAME LANGUAGE MATCH
+    // =====================
     let index = waitingUsers.findIndex(user =>
       user &&
       user.userData &&
       user.userData.gender &&
       user.userData.language &&
+      data &&
+      data.gender &&
+      data.language &&
       user.id !== socket.id &&
       user.userData.gender !== data.gender &&
       user.userData.language === data.language
@@ -52,11 +56,15 @@ io.on("connection", (socket) => {
       return;
     }
 
+    // =====================
     // FALLBACK MATCH
+    // =====================
     index = waitingUsers.findIndex(user =>
       user &&
       user.userData &&
       user.userData.gender &&
+      data &&
+      data.gender &&
       user.id !== socket.id &&
       user.userData.gender !== data.gender
     );
@@ -76,9 +84,15 @@ io.on("connection", (socket) => {
       return;
     }
 
+    // =====================
+    // WAIT
+    // =====================
     waitingUsers.push(socket);
   });
 
+  // =====================
+  // FALLBACK RESPONSE
+  // =====================
   socket.on("fallback-response", (accepted) => {
     const partner = socket.tempPartner;
     if (!partner) return;
@@ -96,7 +110,9 @@ io.on("connection", (socket) => {
     }
   });
 
-  // WEBRTC
+  // =====================
+  // WEBRTC SIGNALING
+  // =====================
   socket.on("webrtc-offer", ({ roomId, offer }) => {
     socket.to(roomId).emit("webrtc-offer", { offer });
   });
@@ -109,12 +125,16 @@ io.on("connection", (socket) => {
     socket.to(roomId).emit("webrtc-ice", { candidate });
   });
 
+  // =====================
   // CHAT
+  // =====================
   socket.on("chat-message", ({ roomId, message }) => {
     socket.to(roomId).emit("chat-message", message);
   });
 
+  // =====================
   // NEXT USER
+  // =====================
   socket.on("next-user", () => {
     if (socket.roomId) {
       socket.to(socket.roomId).emit("partner-disconnected");
@@ -127,7 +147,9 @@ io.on("connection", (socket) => {
     waitingUsers.push(socket);
   });
 
+  // =====================
   // DISCONNECT
+  // =====================
   socket.on("disconnect", () => {
     console.log("User disconnected:", socket.id);
 
@@ -139,7 +161,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// CONNECT USERS
+// =====================
 function connectUsers(user1, user2) {
   const roomId = user1.id + "#" + user2.id;
 
@@ -160,9 +182,10 @@ function connectUsers(user1, user2) {
   });
 }
 
-// ✅ FINAL FIX FOR RENDER
+// =====================
+// ✅ VERY IMPORTANT FOR RENDER
 const PORT = process.env.PORT || 3000;
 
-server.listen(PORT, "0.0.0.0", () => {
-  console.log("Server running on port " + PORT);
+server.listen(PORT, () => {
+  console.log("Server running on port", PORT);
 });
