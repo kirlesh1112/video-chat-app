@@ -2,13 +2,15 @@
 <html lang="en">
 <head>
 
+<!-- ✅ POPUNDER AD (ADD THIS HERE) -->
+<script src="https://pl29107276.profitablerate...js"></script>
+
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-3GBGNCRL8E"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-3GBGNCRL8E');
 </script>
 
@@ -54,58 +56,48 @@
 
         <button id="startBtn">Start Chatting</button>
 
-        <!-- ✅ COMMUNITY GUIDELINES -->
         <div style="margin-top:20px; color:white; font-size:14px; text-align:center;">
             <p><b>Community Guidelines</b></p>
-            <p>• Be respectful to other users</p>
-            <p>• No abusive or harmful behavior</p>
-            <p>• No nudity or inappropriate content</p>
-            <p>• Do not share personal information</p>
-            <p>• Users violating rules may be banned</p>
-            <p>By using this platform, you agree to follow our rules and policies.</p>
+            <p>• Be respectful</p>
+            <p>• No abuse</p>
+            <p>• No nudity</p>
+            <p>• No personal info sharing</p>
         </div>
 
-        <!-- ✅ FOOTER LINKS -->
         <div style="text-align:center; margin-top:15px;">
-            <a href="/privacy.html">Privacy Policy</a> | 
+            <a href="/privacy.html">Privacy</a> | 
             <a href="/about.html">About</a> | 
-            <a href="/contact.html">Contact</a> |
-            <a href="/best-random-video-chat.html">Best Video Chat</a>
+            <a href="/contact.html">Contact</a>
         </div>
 
     </div>
 </div>
 
-<!-- WAITING SCREEN -->
+<!-- WAITING -->
 <div id="waiting-screen" class="screen">
     <h2 style="text-align:center;margin-top:200px;">Finding partner...</h2>
 </div>
 
-<!-- CHAT SCREEN -->
+<!-- CHAT -->
 <div id="chat-screen" class="screen">
-
     <div class="main-layout">
 
-        <!-- VIDEOS -->
         <div class="video-section">
-
             <div class="video-box">
                 <video id="localVideo" autoplay muted playsinline></video>
-                <span class="label">You</span>
+                <span>You</span>
             </div>
 
             <div class="video-box">
                 <video id="partnerVideo" autoplay playsinline></video>
-                <span class="label" id="partnerName">Connecting...</span>
+                <span id="partnerName">Connecting...</span>
             </div>
-
         </div>
 
-        <!-- CHAT -->
         <div class="chat-container">
-            <div id="chatMessages" class="chat-messages"></div>
+            <div id="chatMessages"></div>
 
-            <div class="chat-input">
+            <div>
                 <input id="chatInput" placeholder="Type message..." />
                 <button id="sendBtn">Send</button>
             </div>
@@ -113,16 +105,20 @@
 
     </div>
 
-    <!-- CONTROLS -->
     <div class="controls">
         <button id="nextBtn">Next</button>
         <button id="reportBtn">Report</button>
         <button id="muteBtn">Mute</button>
     </div>
-
 </div>
 
+<!-- SOCKET -->
 <script src="/socket.io/socket.io.js"></script>
+
+<!-- ✅ SOCIAL BAR AD (ADD HERE) -->
+<script src="https://pl29107277.profitablerate...js"></script>
+
+<!-- ✅ YOUR MAIN SCRIPT LAST -->
 <script src="script.js"></script>
 
 </body>
