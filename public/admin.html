@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Dashboard</title>
+<style>
+body {
+    background: #111;
+    color: white;
+    text-align: center;
+    font-family: Arial;
+}
+.card {
+    margin: 20px;
+    padding: 20px;
+    background: #222;
+    border-radius: 10px;
+    display: inline-block;
+}
+h1 { color: #00ffcc; }
+</style>
+</head>
+
+<body>
+
+<h1>📊 Admin Dashboard</h1>
+
+<div class="card">
+    <h2>Online Users</h2>
+    <h1 id="users">0</h1>
+</div>
+
+<div class="card">
+    <h2>Active Chats</h2>
+    <h1 id="chats">0</h1>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const socket = io();
+
+socket.on("admin-stats", (data) => {
+    document.getElementById("users").innerText = data.users;
+    document.getElementById("chats").innerText = data.chats;
+});
+</script>
+
+</body>
+</html>
