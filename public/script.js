@@ -12,10 +12,11 @@ const entryScreen = document.getElementById("entry-screen");
 const waitingScreen = document.getElementById("waiting-screen");
 const chatScreen = document.getElementById("chat-screen");
 
-// ICE SERVERS
+// ICE SERVERS (UPGRADED)
 const config = {
   iceServers: [
     { urls: "stun:stun.l.google.com:19302" },
+    { urls: "stun:stun1.l.google.com:19302" },
     {
       urls: "turn:openrelay.metered.ca:80",
       username: "openrelayproject",
@@ -44,12 +45,17 @@ document.getElementById("startBtn").onclick = async (e) => {
     return;
   }
 
-  localStream = await navigator.mediaDevices.getUserMedia({
-    video: true,
-    audio: true
-  });
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true
+    });
 
-  localVideo.srcObject = localStream;
+    localVideo.srcObject = localStream;
+  } catch (err) {
+    alert("Camera/Mic permission denied");
+    return;
+  }
 
   entryScreen.classList.remove("active");
   waitingScreen.classList.add("active");
@@ -63,20 +69,32 @@ document.getElementById("startBtn").onclick = async (e) => {
 function createPeerConnection() {
   peerConnection = new RTCPeerConnection(config);
 
+  // ADD TRACKS
   localStream.getTracks().forEach(track => {
     peerConnection.addTrack(track, localStream);
   });
 
+  // REMOTE VIDEO
   peerConnection.ontrack = (event) => {
     remoteVideo.srcObject = event.streams[0];
   };
 
+  // ICE
   peerConnection.onicecandidate = (event) => {
     if (event.candidate) {
       socket.emit("webrtc-ice", {
         roomId: currentRoomId,
         candidate: event.candidate
       });
+    }
+  };
+
+  // 🔥 CONNECTION STATE DEBUG (IMPORTANT)
+  peerConnection.onconnectionstatechange = () => {
+    console.log("Connection state:", peerConnection.connectionState);
+
+    if (peerConnection.connectionState === "failed") {
+      console.log("Retrying connection...");
     }
   };
 }
@@ -141,7 +159,7 @@ socket.on("webrtc-ice", async ({ candidate }) => {
   try {
     await peerConnection.addIceCandidate(candidate);
   } catch (e) {
-    console.log(e);
+    console.log("ICE error:", e);
   }
 });
 
@@ -157,23 +175,35 @@ socket.on("fallback-match", (partner) => {
 });
 
 // =====================
-// PARTNER DISCONNECTED (🔥 FIXED)
+// CLEANUP FUNCTION 🔥
 // =====================
-socket.on("partner-disconnected", () => {
-  console.log("Partner disconnected");
+function cleanupConnection() {
+  if (peerConnection) {
+    peerConnection.close();
+    peerConnection = null;
+  }
 
   if (remoteVideo.srcObject) {
     remoteVideo.srcObject.getTracks().forEach(track => track.stop());
   }
 
   remoteVideo.srcObject = null;
+}
+
+// =====================
+// PARTNER DISCONNECTED
+// =====================
+socket.on("partner-disconnected", () => {
+  console.log("Partner disconnected");
+
+  cleanupConnection();
 
   document.getElementById("chatMessages").innerHTML = "";
 
   chatScreen.classList.remove("active");
   waitingScreen.classList.add("active");
 
-  // 🔥 AUTO SEARCH AGAIN
+  // AUTO REJOIN
   socket.emit("join-queue", {
     name: document.getElementById("name").value,
     gender: document.getElementById("gender").value,
@@ -211,18 +241,15 @@ socket.on("chat-message", (message) => {
 });
 
 // =====================
-// NEXT BUTTON (🔥 FIXED)
+// NEXT BUTTON
 // =====================
 document.getElementById("nextBtn").onclick = () => {
   if (!currentRoomId) return;
 
   socket.emit("next-user");
 
-  if (remoteVideo.srcObject) {
-    remoteVideo.srcObject.getTracks().forEach(track => track.stop());
-  }
+  cleanupConnection();
 
-  remoteVideo.srcObject = null;
   chatMessages.innerHTML = "";
 
   chatScreen.classList.remove("active");
