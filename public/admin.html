@@ -38,7 +38,7 @@ h1 { color: #00ffcc; }
 <script>
 const socket = io();
 
-socket.on("admin-stats", (data) => {
+socket.on("admin-update", (data) => {
     document.getElementById("users").innerText = data.users;
     document.getElementById("chats").innerText = data.chats;
 });
