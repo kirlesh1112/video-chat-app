@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ChatRandom</title>
 
-<!-- ✅ GOOGLE ADSENSE (ADDED HERE) -->
+<!-- Google AdSense -->
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8006406943455056"
      crossorigin="anonymous"></script>
 
@@ -15,7 +15,7 @@
 
 <body>
 
-<!-- ENTRY -->
+<!-- ENTRY SCREEN -->
 <div id="entry-screen" class="screen active">
     <div class="container">
         <h1>🎥 ChatRandom</h1>
@@ -36,10 +36,29 @@
         </select><br><br>
 
         <button id="startBtn">Start Chatting</button>
+
+        <!-- ✅ COMMUNITY GUIDELINES -->
+        <div style="margin-top:20px; color:white; font-size:14px; text-align:center;">
+            <p><b>Community Guidelines</b></p>
+            <p>• Be respectful to other users</p>
+            <p>• No abusive or harmful behavior</p>
+            <p>• No nudity or inappropriate content</p>
+            <p>• Do not share personal information</p>
+            <p>• Users violating rules may be banned</p>
+            <p>By using this platform, you agree to follow our rules and policies.</p>
+        </div>
+
+        <!-- ✅ FOOTER LINKS -->
+        <div style="text-align:center; margin-top:15px;">
+            <a href="/privacy.html">Privacy Policy</a> | 
+            <a href="/about.html">About</a> | 
+            <a href="/contact.html">Contact</a>
+        </div>
+
     </div>
 </div>
 
-<!-- WAITING -->
+<!-- WAITING SCREEN -->
 <div id="waiting-screen" class="screen">
     <h2 style="text-align:center;margin-top:200px;">Finding partner...</h2>
 </div>
@@ -76,7 +95,7 @@
 
     </div>
 
-    <!-- BUTTONS -->
+    <!-- CONTROLS -->
     <div class="controls">
         <button id="nextBtn">Next</button>
         <button id="reportBtn">Report</button>
@@ -87,10 +106,6 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="script.js"></script>
-<div style="text-align:center; margin:20px;">
-  <a href="/privacy.html">Privacy Policy</a> |
-  <a href="/about.html">About</a> |
-  <a href="/contact.html">Contact</a>
-</div>
+
 </body>
 </html>
