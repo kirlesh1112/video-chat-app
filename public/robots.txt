@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://video-chat-app-3hea.onrender.com/sitemap.xml
